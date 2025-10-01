@@ -30,3 +30,64 @@ Servicios orquestados con **Docker Compose**:
 ```bash
 git clone https://github.com/tu-usuario/mini-cloud.git
 cd mini-cloud
+```
+
+### 2. Levantar el stack
+
+```bash
+docker-compose up --build
+```
+Esto construye las imágenes y levanta los contenedores:
+
+- API: Flask app
+- DB: PostgreSQL
+- Simulator: envía lecturas cada 5 segundos
+- Grafana: interfaz web de visualización
+
+Para correrlos en segundo plano:
+
+```bash
+docker-compose up -d --build
+```
+
+## 🌐 Acceso a los servicios
+- API: http://localhost:5000
+- Grafana: http://localhost:3000 (user: admin / pass: admin)
+- Postgres: interno db:5432 (user: postgres / pass: postgres)
+
+## 🔗 API Endpoints
+
+**POST /data**
+
+Recibe datos de sensores en formato FIWARE NGSI-v2.
+
+```json
+{
+  "id": "Sensor001",
+  "type": "TemperatureSensor",
+  "temperature": {
+    "value": 25.6,
+    "type": "Float"
+  },
+  "location": {
+    "value": "living-room",
+    "type": "Text"
+  }
+}
+```
+
+**GET /data**
+
+Obtiene las últimas lecturas almacenadas
+
+```json
+[
+  {
+    "id": "Sensor001",
+    "type": "TemperatureSensor",
+    "temperature": {"value": 25.6, "type": "Float"},
+    "location": {"value": "living-room", "type": "Text"},
+    "created_at": "2025-10-01T10:25:00"
+  }
+]
+```
