@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=sensors
+      - DB_USER=postgres
+      - DB_PASS=postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sensors
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  simulator:
+    build: ./simulator
+    environment:
+      - API_URL=http://api:5000/data
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - db
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  db_data:
+  grafana_data:
