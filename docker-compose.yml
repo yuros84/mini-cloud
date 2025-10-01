@@ -22,11 +22,16 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"  # Exponer puerto al host
+
 
   simulator:
     build: ./simulator
     environment:
       - API_URL=http://api:5000/data
+      - SENSOR_ID=Sensor001
+      - SENSOR_LOCATION=living-room
     depends_on:
       - api
 
